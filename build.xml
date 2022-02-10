@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="textMF" basedir="." default="jar">
+    <property name="SRC" value="src"/>
+    <property name="OUTPUT" value="bin"/>
+    <property name="LIBS" value="libs"/>
+    <property
+            name="ANTPROPERTIES"
+            value="properties/java-db-properties.xml"/>
+
+    <import file="${ANTPROPERTIES}"/>
+
+    <target name="setup">
+        <antcall target="drop-tables"/>
+        <antcall target="build-tables"/>
+    </target>
+
+    <target name="compile" depends="create">
+        <javac destdir="bin">
+            <src path="${SRC}"/>
+            <classpath refid="external.jars"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${OUTPUT}/textmf.jar">
+            <fileset dir="bin"/>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="${OUTPUT}"/>
+    </target>
+
+    <target name="create" depends="clean">
+        <mkdir dir="${OUTPUT}"/>
+    </target>
+
+    <path id="external.jars">
+        <fileset dir="${LIBS}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="drop-tables">
+        <sql driver="${DB.DRIVER}" url="${DB.URL}" userid="${DB.USER}"
+             password="${DB.PASSWORD}" classpathref="CLASSPATH"
+             delimiter="${DB.DELIMITER}" autocommit="false" onerror="continue">
+            <transaction src="./sql/${DB.VENDOR}/drop-tables.sql"></transaction>
+        </sql>
+    </target>
+
+    <target name="build-tables" description="Create database tables">
+        <sql driver="${DB.DRIVER}" url="${DB.URL}" userid="${DB.USER}"
+             password="${DB.PASSWORD}" classpathref="CLASSPATH"
+             delimiter="${DB.DELIMITER}" autocommit="false" onerror="continue">
+            <transaction src="./sql/${DB.VENDOR}/create-tables.sql"></transaction>
+        </sql>
+    </target>
+
+</project>

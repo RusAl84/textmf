@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_textmf" default="compile.module.textmf">
+  <dirname property="module.textmf.basedir" file="${ant.file.module_textmf}"/>
+  
+  <property name="module.jdk.home.textmf" value="${jdk.home.1.8}"/>
+  <property name="module.jdk.bin.textmf" value="${jdk.bin.1.8}"/>
+  <property name="module.jdk.classpath.textmf" value="jdk.classpath.1.8"/>
+  
+  <property name="compiler.args.textmf" value="-encoding UTF-8 -source 7 -target 7 ${compiler.args}"/>
+  
+  <property name="textmf.output.dir" value="${module.textmf.basedir}/../out/production/textmf"/>
+  <property name="textmf.testoutput.dir" value="${module.textmf.basedir}/../out/test/textmf"/>
+  
+  <path id="textmf.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="textmf.module.production.classpath">
+    <path refid="${module.jdk.classpath.textmf}"/>
+  </path>
+  
+  <path id="textmf.runtime.production.module.classpath">
+    <pathelement location="${textmf.output.dir}"/>
+  </path>
+  
+  <path id="textmf.module.classpath">
+    <path refid="${module.jdk.classpath.textmf}"/>
+    <pathelement location="${textmf.output.dir}"/>
+  </path>
+  
+  <path id="textmf.runtime.module.classpath">
+    <pathelement location="${textmf.testoutput.dir}"/>
+    <pathelement location="${textmf.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.textmf">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.textmf">
+    <patternset refid="excluded.from.module.textmf"/>
+  </patternset>
+  
+  <path id="textmf.module.sourcepath">
+    <dirset dir="${module.textmf.basedir}/../../textmf">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.textmf" depends="compile.module.textmf.production,compile.module.textmf.tests" description="Compile module textmf"/>
+  
+  <target name="compile.module.textmf.production" depends="register.custom.compilers" description="Compile module textmf; production classes">
+    <mkdir dir="${textmf.output.dir}"/>
+    <javac2 destdir="${textmf.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.textmf}/javac">
+      <compilerarg line="${compiler.args.textmf}"/>
+      <bootclasspath refid="textmf.module.bootclasspath"/>
+      <classpath refid="textmf.module.production.classpath"/>
+      <src refid="textmf.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.textmf"/>
+    </javac2>
+    
+    <copy todir="${textmf.output.dir}">
+      <fileset dir="${module.textmf.basedir}/../src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.textmf.tests" depends="register.custom.compilers,compile.module.textmf.production" description="compile module textmf; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.textmf" description="cleanup module">
+    <delete dir="${textmf.output.dir}"/>
+    <delete dir="${textmf.testoutput.dir}"/>
+  </target>
+</project>

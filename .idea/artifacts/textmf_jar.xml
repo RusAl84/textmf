@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="textmf:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/textmf_jar</output-path>
+    <root id="archive" name="textmf.jar">
+      <element id="module-output" name="textmf" />
+    </root>
+  </artifact>
+</component>
